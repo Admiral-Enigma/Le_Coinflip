@@ -21,6 +21,7 @@ io.on('connection', function(socket){
 	socket.on('newUser', function (data) {
 		db.users.push(data)
 		console.log(data.name);
+		io.emit('spin', {side:0});
 	})
 })
 

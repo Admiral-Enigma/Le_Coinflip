@@ -15,6 +15,9 @@ window.onload = function () {
   }else {
     name = prompt('Enter Name','Joe')
   }
+  socket.on('spin',function (data) {
+    flipper.spin(data.side)
+  })
 
 
 }
