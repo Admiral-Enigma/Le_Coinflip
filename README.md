@@ -1,4 +1,6 @@
 # Le_Coinflip
+![lenny](http://i.imgur.com/CPFakg7.gif?noredirect)
+
 A coinflip csgo like betting game without real money or skins but bits!
 
 # Todo list
