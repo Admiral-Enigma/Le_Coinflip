@@ -3,7 +3,21 @@ var http = require("http").Server(app)
 var io = require('socket.io')(http)
 var db = {
 	users: [],
-	bankMoney: 300000
+	bankBits: 300000
+}
+
+var banker = {
+	giveBits: function (amount, name) {
+		db.users.forEach(function (user) {
+			if (user.name == name){
+				user.bits += amount
+				db.bankBits -= amount
+				console.log('Gave '+amount+'bits to '+user.name)
+				console.log(db.bankBits)
+				console.log(user.bits)
+			}
+		})
+	}
 }
 
 app.get("/", function(req, res) {
@@ -21,6 +35,7 @@ io.on('connection', function(socket){
 	socket.on('newUser', function (data) {
 		db.users.push(data)
 		console.log(data.name)
+		banker.giveBits(30, data.name)
 	})
 })
 
