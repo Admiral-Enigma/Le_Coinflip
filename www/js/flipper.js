@@ -3,9 +3,9 @@ var flipper = {
   spin: function (side) {
     var animation = ''
     console.log(side);
-    if (side == 0) {
+    if (side == 1) {
       animation = 'animation1080'
-    }else if (side == 1) {
+    }else if (side == 2) {
       animation = 'animation900'
     }
     console.log(animation);

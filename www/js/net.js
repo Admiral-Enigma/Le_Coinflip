@@ -11,13 +11,10 @@ window.onload = function () {
   if (name != '') {
     user.name = name
     socket.emit('newUser', user)
-    console.log('JOE');
   }else {
     name = prompt('Enter Name','Joe')
   }
   socket.on('spin',function (data) {
-    flipper.spin(data.side)
+    flipper.spin(data)
   })
-
-
 }
