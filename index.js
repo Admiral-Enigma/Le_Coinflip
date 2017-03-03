@@ -39,6 +39,7 @@ io.on('connection', function(socket){
 	})
 })
 
+// TODO: Make it only one second and broadcast the remaining time to the users
 setInterval(function () {
 	var spin = Math.floor(Math.random() * 2) + 1;
 	console.log(spin);
