@@ -14,6 +14,7 @@ var banker = {
 				user.bits += amount
 				db.bankBits -= amount
 				console.log('Gave '+amount+'bits to '+user.name)
+				io.emit('bitsGiven', user, amount)
 				console.log(db.bankBits)
 				console.log(user.bits)
 			}
@@ -42,6 +43,7 @@ io.on('connection', function(socket){
 })
 
 // TODO: Make it only one second and broadcast the remaining time to the users
+// DONE
 setInterval(function () {
 	counter--
 	if (counter < 0) {

@@ -2,20 +2,35 @@ window.onload = function () {
   var socket = io()
 
   // setting up the user
-  var name = prompt('Enter Name','Joe')
   var user = {
     name: '',
-    bits: 0
+    bits: 0,
+    setupName: function () {
+      var inputname = prompt('Enter Name','Joe')
+      if (inputname != ''){
+        this.name = inputname
+        socket.emit('newUser', this)
+      }else {
+       this.setupName()
+      }
+    },
+    updateBalance: function (amount) {
+      this.bits += amount
+      $('#balance').html('You have: '+this.bits+' bits')
+    }
   }
+  user.setupName();
 
-  if (name != '') {
-    user.name = name
-    socket.emit('newUser', user)
-  }else {
-    name = prompt('Enter Name','Joe')
-  }
   socket.on('spin',function (data) {
     flipper.spin(data)
+  })
+
+  //TODO: add some more checking
+  socket.on('bitsGiven', function (data, amount) {
+    if(data.name == user.name){
+      console.log('YAY got some coins');
+      user.updateBalance(amount)
+    }
   })
 
   socket.on('countDown', function (timeleft) {
