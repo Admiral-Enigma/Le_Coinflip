@@ -17,4 +17,7 @@ window.onload = function () {
   socket.on('spin',function (data) {
     flipper.spin(data)
   })
+
+  socket.on('countDown', function (timeleft) {
+  })
 }

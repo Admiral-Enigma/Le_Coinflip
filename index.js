@@ -1,6 +1,7 @@
 var app = require("express")()
 var http = require("http").Server(app)
 var io = require('socket.io')(http)
+var counter = 40
 var db = {
 	users: [],
 	bankBits: 300000
@@ -37,14 +38,22 @@ io.on('connection', function(socket){
 		console.log(data.name)
 		banker.giveBits(30, data.name)
 	})
+	io.emit('countDown', counter)
 })
 
 // TODO: Make it only one second and broadcast the remaining time to the users
 setInterval(function () {
-	var spin = Math.floor(Math.random() * 2) + 1;
-	console.log(spin);
-	io.emit('spin', spin)
-},20000)
+	counter--
+	if (counter < 0) {
+		var spin = Math.floor(Math.random() * 2) + 1;
+		console.log(spin);
+		io.emit('spin', spin)
+		counter = 40
+	}else {
+		io.emit('countDown', counter)
+		console.log('Time left: '+counter);
+	}
+},1000)
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
