@@ -19,5 +19,6 @@ window.onload = function () {
   })
 
   socket.on('countDown', function (timeleft) {
+    $('#timer').html('Time to next spin: '+timeleft+' seconds')
   })
 }
