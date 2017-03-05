@@ -23,7 +23,7 @@ window.onload = function () {
 
   socket.on('spin',function (data) {
     flipper.spin(data)
-    $('#timer').html('Spinning....')
+    $('#timer').html('Time to next spin: Spinning....')
   })
 
   //TODO: add some more checking
