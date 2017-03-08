@@ -41,7 +41,7 @@ var banker = {
 				console.log(user.bits)
 			}
 		})
-	},
+	}
 }
 
 app.get("/", function(req, res) {
@@ -61,8 +61,9 @@ io.on('connection', function(socket){
 		banker.giveBits(30, data.name)
 	})
 	socket.on('placeBet', function (data) {
-		var ludoman = banker.findUser(data.user.name)
-
+		console.log('Hey');
+		console.log(data.side + ' ' +data.amount + ' ' + data.user.name);
+		banker.removeBits(data.amount, data.user.name)
 	})
 	io.emit('countDown', counter)
 })
@@ -73,7 +74,7 @@ setInterval(function () {
 	if(counter > 0){
 		counter--
 		io.emit('countDown', counter)
-		console.log('Time left: '+counter)
+		//console.log('Time left: '+counter)
 	}else if (counter == 0) {
 		if (spinning == false) {
 			var spin = Math.floor(Math.random() * 2) + 1

@@ -14,21 +14,27 @@ window.onload = function () {
        this.setupName()
       }
     },
-    updateBalance: function (amount) {
+    addBalance: function (amount) {
       this.bits += amount
+      $('#balance').html('You have: '+this.bits+' bits')
+    },
+    removeBalance: function (amount) {
+      this.bits -= amount
       $('#balance').html('You have: '+this.bits+' bits')
     }
   }
   user.setupName()
 
   $('#betH').click(function () {
-    if(parseInt($('#bitValue').val()) >= user.bits && $('#bitValue').val() != ''){
+    console.log(parseInt($('#bitValue').val()));
+    if(parseInt($('#bitValue').val()) <= user.bits && $('#bitValue').val() != ''){
+      console.log('e');
       socket.emit('placeBet', {side:1, amount:parseInt($('#bitValue').val()), user:user})
     }
   })
 
   $('#betT').click(function () {
-    if(parseInt($('#bitValue').val()) >= user.bits && $('#bitValue').val() != ''){
+    if(parseInt($('#bitValue').val()) <= user.bits && $('#bitValue').val() != ''){
       socket.emit('placeBet', {side:2, amount:parseInt($('#bitValue').val()), user:user})
     }
   })
@@ -43,7 +49,13 @@ window.onload = function () {
   socket.on('bitsGiven', function (data, amount) {
     if(data.name == user.name){
       console.log('YAY got some me coin');
-      user.updateBalance(amount)
+      user.addBalance(amount)
+    }
+  })
+
+  socket.on('bitsRemoved',function (data, amount) {
+    if(data.name == user.name){
+      user.removeBalance(amount)
     }
   })
 
