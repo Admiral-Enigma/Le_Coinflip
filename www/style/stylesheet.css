@@ -11,3 +11,13 @@
   color: white !important;
   background-color: #34495e !important;
 }
+
+.panel {
+  display: inline-block !important;
+  width: 48% !important;
+  height: 60% !important;
+}
+.buffer {
+  display: inline-block;
+  width: 40px;
+}

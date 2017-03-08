@@ -19,8 +19,21 @@ window.onload = function () {
       $('#balance').html('You have: '+this.bits+' bits')
     }
   }
-  user.setupName();
+  user.setupName()
 
+  $('#betH').click(function () {
+    if(parseInt($('#bitValue').val()) >= user.bits && $('#bitValue').val() != ''){
+      socket.emit('placeBet', {side:1, amount:parseInt($('#bitValue').val()), user:user})
+    }
+  })
+
+  $('#betT').click(function () {
+    if(parseInt($('#bitValue').val()) >= user.bits && $('#bitValue').val() != ''){
+      socket.emit('placeBet', {side:2, amount:parseInt($('#bitValue').val()), user:user})
+    }
+  })
+
+  //NET code
   socket.on('spin',function (data) {
     flipper.spin(data)
     $('#timer').html('Time to next spin: Spinning....')
