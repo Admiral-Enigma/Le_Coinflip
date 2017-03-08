@@ -25,11 +25,10 @@ var banker = {
 
 app.get("/", function(req, res) {
 	res.sendFile(__dirname + '/www/index.html')
-
 })
 
 app.get(/^(.+)$/, function(req, res){
-    console.log('static file request : ' + req.params);
+    console.log('static file request : ' + req.params[0]);
     res.sendfile( __dirname + req.params[0])
 })
 
@@ -43,8 +42,6 @@ io.on('connection', function(socket){
 	io.emit('countDown', counter)
 })
 
-// TODO: Make it only one second and broadcast the remaining time to the users
-// DONE
 setInterval(function () {
 	if(counter > 0){
 		counter--

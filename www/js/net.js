@@ -29,7 +29,7 @@ window.onload = function () {
   //TODO: add some more checking
   socket.on('bitsGiven', function (data, amount) {
     if(data.name == user.name){
-      console.log('YAY got some coins');
+      console.log('YAY got some me coin');
       user.updateBalance(amount)
     }
   })
