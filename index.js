@@ -4,6 +4,8 @@ var io = require('socket.io')(http)
 var counter = 40
 var spinning = false
 var db = {
+	headP: 0,
+	tailsP: 0,
 	users: [],
 	bankBits: 300000
 }
@@ -41,6 +43,11 @@ var banker = {
 				console.log(user.bits)
 			}
 		})
+	},
+	resetPool: function () {
+		db.headP = 0
+		db.tailsP = 0
+		io.emit('poolReset')
 	}
 }
 
@@ -55,15 +62,22 @@ app.get(/^(.+)$/, function(req, res){
 
 io.on('connection', function(socket){
   console.log('a user connected');
+	io.emit('newData', db.headP, db.tailsP)
+
 	socket.on('newUser', function (data) {
 		db.users.push(data)
 		console.log(data.name)
 		banker.giveBits(30, data.name)
 	})
 	socket.on('placeBet', function (data) {
-		console.log('Hey');
 		console.log(data.side + ' ' +data.amount + ' ' + data.user.name);
 		banker.removeBits(data.amount, data.user.name)
+		if (data.side == 1) {
+			db.headP += data.amount
+		}else if (data.side == 2) {
+			db.tailsP += data.amount
+		}
+		io.emit('newBet', data.amount, db.headP, db.tailsP, data.user.name, data.side)
 	})
 	io.emit('countDown', counter)
 })
@@ -83,6 +97,7 @@ setInterval(function () {
 			spinning = true
 			setTimeout(function () {
 				counter = 40
+				banker.resetPool()
 				spinning = false
 			}, 4000)
 		}

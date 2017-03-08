@@ -1,7 +1,8 @@
 window.onload = function () {
   var socket = io()
-
+  var first = true;
   // setting up the user
+
   var user = {
     name: '',
     bits: 0,
@@ -40,9 +41,11 @@ window.onload = function () {
   })
 
   //NET code
-  socket.on('spin',function (data) {
+  socket.on('spin', function (data) {
     flipper.spin(data)
     $('#timer').html('Time to next spin: Spinning....')
+    $('#personal-pledgeH').html('0')
+    $('#personal-pledgeT').html('0')
   })
 
   //TODO: add some more checking
@@ -53,9 +56,38 @@ window.onload = function () {
     }
   })
 
-  socket.on('bitsRemoved',function (data, amount) {
+  socket.on('bitsRemoved', function (data, amount) {
     if(data.name == user.name){
       user.removeBalance(amount)
+    }
+  })
+
+  socket.on('newData', function (headP, tailsP) {
+    if (first) {
+      $('#bettedH').html('Total bits pledged: '+headP)
+      $('#bettedT').html('Total bits pledged: '+tailsP)
+      first = false
+    }
+  })
+  socket.on('poolReset', function () {
+    $('#bettedH').html('Total bits pledged: 0')
+    $('#bettedT').html('Total bits pledged: 0')
+  })
+  socket.on('newBet', function (amount, headP, tailsP, username, side) {
+    if(username == user.name){
+      if(side == 1){
+        $('#personal-pledgeH').html(''+amount)
+      }else if (side == 2) {
+        $('#personal-pledgeT').html(''+amount)
+      }
+      $('#bettedH').html('Total bits pledged: '+headP)
+      $('#bettedT').html('Total bits pledged: '+tailsP)
+    }else {
+      if(side == 1){
+        $('#bettedH').html('Total bits pledged: '+headP)
+      }else if (side == 2) {
+        $('#bettedT').html('Total bits pledged: '+tailsP)
+      }
     }
   })
 
