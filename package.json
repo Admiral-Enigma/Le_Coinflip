@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
-    "web": "node index.js"
+    "start": "node index.js"
   },
   "author": "Lord Squirrel",
   "license": "MIT",
