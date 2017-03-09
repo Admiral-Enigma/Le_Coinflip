@@ -1,6 +1,7 @@
 var app = require("express")()
 var http = require("http").Server(app)
 var io = require('socket.io')(http)
+var port = Number(process.env.PORT || 3000)
 var counter = 40
 var spinning = false
 var db = {
@@ -104,6 +105,6 @@ setInterval(function () {
 	}
 },1000)
 
-http.listen(3000, function(){
-  console.log('listening on *:3000')
+http.listen(port, function(){
+  console.log('listening on *:'+port)
 })
