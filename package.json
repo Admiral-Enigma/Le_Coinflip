@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "test": "node index.js",
+    "web": "node index.js"
   },
   "author": "Lord Squirrel",
   "license": "MIT",
