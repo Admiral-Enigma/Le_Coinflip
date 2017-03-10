@@ -1,6 +1,9 @@
 var app = require("express")()
 var http = require("http").Server(app)
 var io = require('socket.io')(http)
+var fs = require('fs')
+
+var logFilePath = './logs/logs.json'
 var port = Number(process.env.PORT || 3000)
 var counter = 60
 var spinning = false
@@ -20,8 +23,13 @@ var log = {
 	events:[]
 }
 var util = {
-	getUnixTime:function () {
+	getUnixTime: function () {
 		return Math.round(new Date() / 1000);
+	},
+	saveLogs: function () {
+		var logJson = JSON.stringify(log);
+		fs.writeFileSync(logFilePath, logJson)
+		console.log(util.getUnixTime() + ' Saved log file! (hopefuly)');
 	}
 }
 var banker = {
@@ -65,10 +73,7 @@ var banker = {
 		var poolEvent = {time:util.getUnixTime(), pout:util.getUnixTime()+' '+'Pool got reset'}
 		log.events.push(poolEvent)
 		io.emit('poolReset')
-	}
-}
-
-var repayer = {
+	},
 	repayMoney: function (winside) {
 		db.pool.forEach(function (bet) {
 			if(bet.side == winside){
@@ -81,15 +86,6 @@ var repayer = {
 		})
 	}
 }
-
-app.get("/", function(req, res) {
-	res.sendFile(__dirname + '/www/index.html')
-})
-
-app.get(/^(.+)$/, function(req, res){
-    console.log('static file request : ' + req.params);
-    res.sendfile( __dirname + req.params[0])
-})
 
 io.on('connection', function(socket){
 	io.emit('newData', db.headP, db.tailsP)
@@ -123,8 +119,6 @@ io.on('connection', function(socket){
 	io.emit('countDown', counter)
 })
 
-// TODO: Make it only one second and broadcast the remaining time to the users
-// DONE
 setInterval(function () {
 	if(counter > 0){
 		counter--
@@ -139,13 +133,26 @@ setInterval(function () {
 				counter = 60
 				var spinres = {time:util.getUnixTime(), side:spin}
 				log.spinRes.push(spinres)
-				repayer.repayMoney(spin)
+				banker.repayMoney(spin)
 				banker.resetPool()
 				spinning = false
 			}, 4000)
 		}
 	}
 },1000)
+
+setInterval(function () {
+	util.saveLogs()
+}, 60000)
+
+app.get("/", function(req, res) {
+	res.sendFile(__dirname + '/www/index.html')
+})
+
+app.get(/^(.+)$/, function(req, res){
+    console.log('static file request : ' + req.params);
+    res.sendfile( __dirname + req.params[0])
+})
 
 http.listen(port, function(){
   console.log('listening on *:'+port)
