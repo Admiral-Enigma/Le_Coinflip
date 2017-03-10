@@ -4,9 +4,11 @@ var io = require('socket.io')(http)
 var port = Number(process.env.PORT || 3000)
 var counter = 40
 var spinning = false
+var spin;
 var db = {
 	headP: 0,
 	tailsP: 0,
+	pool:[],
 	users: [],
 	bankBits: 300000
 }
@@ -48,7 +50,20 @@ var banker = {
 	resetPool: function () {
 		db.headP = 0
 		db.tailsP = 0
+		db.pool = []
 		io.emit('poolReset')
+	}
+}
+
+var repayer = {
+	repayMoney: function (winside) {
+		db.pool.forEach(function (bet) {
+			if(bet.side == winside){
+				var repay = bet.amount * 2
+				console.log('Repayed '+repay+' to '+bet.name);
+				banker.giveBits(repay, bet.name)
+			}
+		})
 	}
 }
 
@@ -71,7 +86,6 @@ io.on('connection', function(socket){
 		banker.giveBits(30, data.name)
 	})
 	socket.on('placeBet', function (data) {
-		console.log(data.side + ' ' +data.amount + ' ' + data.user.name);
 		banker.removeBits(data.amount, data.user.name)
 		if (data.side == 1) {
 			db.headP += data.amount
@@ -79,6 +93,9 @@ io.on('connection', function(socket){
 			db.tailsP += data.amount
 		}
 		io.emit('newBet', data.amount, db.headP, db.tailsP, data.user.name, data.side)
+		console.log('added new bet to pool');
+		console.log(data.side +' '+ data.user.name);
+		db.pool.push({side:data.side, amount:data.amount, name:data.user.name})
 	})
 	io.emit('countDown', counter)
 })
@@ -89,16 +106,16 @@ setInterval(function () {
 	if(counter > 0){
 		counter--
 		io.emit('countDown', counter)
-		//console.log('Time left: '+counter)
 	}else if (counter == 0) {
 		if (spinning == false) {
-			var spin = Math.floor(Math.random() * 2) + 1
+			spin = Math.floor(Math.random() * 2) + 1
 			console.log(spin);
 			io.emit('spin', spin)
 			spinning = true
 			setTimeout(function () {
 				counter = 40
 				banker.resetPool()
+				repayer.repayMoney(spin)
 				spinning = false
 			}, 4000)
 		}
