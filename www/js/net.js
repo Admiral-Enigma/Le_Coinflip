@@ -1,6 +1,8 @@
 window.onload = function () {
   var socket = io()
   var first = true;
+  var pHead = 0;
+  var pTails = 0;
   // setting up the user
 
   var user = {
@@ -44,8 +46,7 @@ window.onload = function () {
   socket.on('spin', function (data) {
     flipper.spin(data)
     $('#timer').html('Time to next spin: Spinning....')
-    $('#personal-pledgeH').html('0')
-    $('#personal-pledgeT').html('0')
+
   })
 
   //TODO: add some more checking
@@ -70,15 +71,21 @@ window.onload = function () {
     }
   })
   socket.on('poolReset', function () {
+    pHead = 0
+    pTails = 0
+    $('#personal-pledgeH').html('0')
+    $('#personal-pledgeT').html('0')
     $('#bettedH').html('Total bits pledged: 0')
     $('#bettedT').html('Total bits pledged: 0')
   })
   socket.on('newBet', function (amount, headP, tailsP, username, side) {
     if(username == user.name){
       if(side == 1){
-        $('#personal-pledgeH').html(''+amount)
+        pHead += amount
+        $('#personal-pledgeH').html(''+pHead)
       }else if (side == 2) {
-        $('#personal-pledgeT').html(''+amount)
+        pTails += amount
+        $('#personal-pledgeT').html(''+pTails)
       }
       $('#bettedH').html('Total bits pledged: '+headP)
       $('#bettedT').html('Total bits pledged: '+tailsP)
@@ -93,5 +100,9 @@ window.onload = function () {
 
   socket.on('countDown', function (timeleft) {
     $('#timer').html('Time to next spin: '+timeleft+' seconds')
+  })
+
+  socket.on('onlineStat', function (count) {
+    $('#online-counter').html(count + ' users online')
   })
 }

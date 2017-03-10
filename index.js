@@ -2,7 +2,7 @@ var app = require("express")()
 var http = require("http").Server(app)
 var io = require('socket.io')(http)
 var port = Number(process.env.PORT || 3000)
-var counter = 40
+var counter = 60
 var spinning = false
 var spin;
 var db = {
@@ -10,7 +10,8 @@ var db = {
 	tailsP: 0,
 	pool:[],
 	users: [],
-	bankBits: 300000
+	bankBits: 300000,
+	usersOnline: 0
 }
 
 var banker = {
@@ -84,6 +85,8 @@ io.on('connection', function(socket){
 		db.users.push(data)
 		console.log(data.name)
 		banker.giveBits(300, data.name)
+		db.usersOnline += 1
+		io.emit('onlineStat', db.usersOnline)
 	})
 	socket.on('placeBet', function (data) {
 		banker.removeBits(data.amount, data.user.name)
@@ -96,6 +99,10 @@ io.on('connection', function(socket){
 		console.log('added new bet to pool');
 		console.log(data.side +' '+ data.user.name);
 		db.pool.push({side:data.side, amount:data.amount, name:data.user.name})
+	})
+	socket.on('disconnect', function () {
+		db.usersOnline -= 1
+		io.emit('onlineStat', db.usersOnline)
 	})
 	io.emit('countDown', counter)
 })
@@ -113,7 +120,7 @@ setInterval(function () {
 			io.emit('spin', spin)
 			spinning = true
 			setTimeout(function () {
-				counter = 40
+				counter = 60
 				repayer.repayMoney(spin)
 				banker.resetPool()
 				spinning = false

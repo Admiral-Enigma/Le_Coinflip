@@ -21,3 +21,12 @@
   display: inline-block;
   width: 40px;
 }
+
+.online-counter {
+  width: 9.50% !important;
+  height: 50px !important;
+  margin-left: 30px;
+  margin-top: 10px;
+  background-color: #34495E;
+  border-color: #2C3E50;
+}
