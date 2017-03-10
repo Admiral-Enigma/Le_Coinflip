@@ -83,7 +83,7 @@ io.on('connection', function(socket){
 	socket.on('newUser', function (data) {
 		db.users.push(data)
 		console.log(data.name)
-		banker.giveBits(30, data.name)
+		banker.giveBits(300, data.name)
 	})
 	socket.on('placeBet', function (data) {
 		banker.removeBits(data.amount, data.user.name)
@@ -114,8 +114,8 @@ setInterval(function () {
 			spinning = true
 			setTimeout(function () {
 				counter = 40
-				banker.resetPool()
 				repayer.repayMoney(spin)
+				banker.resetPool()
 				spinning = false
 			}, 4000)
 		}
