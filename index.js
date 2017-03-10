@@ -113,7 +113,11 @@ io.on('connection', function(socket){
 		db.pool.push({time:util.getUnixTime(), side:data.side, amount:data.amount, name:data.user.name})
 	})
 	socket.on('disconnect', function () {
-		db.usersOnline -= 1
+		if(db.usersOnline > 0){
+			db.usersOnline -= 1
+		}else {
+			db.usersOnline = 0
+		}
 		io.emit('onlineStat', db.usersOnline)
 	})
 	io.emit('countDown', counter)
@@ -150,7 +154,7 @@ app.get("/", function(req, res) {
 })
 
 app.get(/^(.+)$/, function(req, res){
-    console.log('static file request : ' + req.params);
+    //console.log('static file request : ' + req.params[0]);
     res.sendfile( __dirname + req.params[0])
 })
 
