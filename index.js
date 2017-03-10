@@ -13,17 +13,27 @@ var db = {
 	bankBits: 300000,
 	usersOnline: 0
 }
-
+var log = {
+	spinRes: [],
+	betsPlaced: [],
+	transActions: [],
+	events:[]
+}
+var util = {
+	getUnixTime:function () {
+		return Math.round(new Date() / 1000);
+	}
+}
 var banker = {
 	giveBits: function (amount, name) {
 		db.users.forEach(function (user) {
 			if (user.name == name){
 				user.bits += amount
 				db.bankBits -= amount
-				console.log('Gave '+amount+'bits to '+user.name)
+				var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Gave '+amount+'bits to '+user.name}
+				log.transActions.push(transaction)
+				console.log(transaction.pout)
 				io.emit('bitsGiven', user, amount)
-				console.log(db.bankBits)
-				console.log(user.bits)
 			}
 		})
 	},
@@ -41,10 +51,10 @@ var banker = {
 			if (user.name == name){
 				user.bits -= amount
 				//db.bankBits -= amount
-				console.log('Removed '+amount+'bits to '+user.name)
+				var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Removed '+amount+'bits from '+user.name}
+				log.transActions.push(transaction)
+				console.log(transaction.pout)
 				io.emit('bitsRemoved', user, amount)
-				console.log(db.bankBits)
-				console.log(user.bits)
 			}
 		})
 	},
@@ -52,6 +62,8 @@ var banker = {
 		db.headP = 0
 		db.tailsP = 0
 		db.pool = []
+		var poolEvent = {time:util.getUnixTime(), pout:util.getUnixTime()+' '+'Pool got reset'}
+		log.events.push(poolEvent)
 		io.emit('poolReset')
 	}
 }
@@ -61,7 +73,9 @@ var repayer = {
 		db.pool.forEach(function (bet) {
 			if(bet.side == winside){
 				var repay = bet.amount * 2
-				console.log('Repayed '+repay+' to '+bet.name);
+				var repayEvent = {time:util.getUnixTime(), side:winside, amount:repay, user:bet.name, pout:util.getUnixTime()+' '+'Repayed '+repay+'bits to '+bet.name+' on '+winside+' side'}
+				log.transActions.push(repayEvent)
+				console.log(repayEvent.pou);
 				banker.giveBits(repay, bet.name)
 			}
 		})
@@ -78,12 +92,13 @@ app.get(/^(.+)$/, function(req, res){
 })
 
 io.on('connection', function(socket){
-  console.log('a user connected');
 	io.emit('newData', db.headP, db.tailsP)
 
 	socket.on('newUser', function (data) {
 		db.users.push(data)
-		console.log(data.name)
+		var newuser = {time:util.getUnixTime(), name:data.name, pout:util.getUnixTime()+' '+data.name+' has connected'}
+		log.events.push(newuser)
+		console.log(newuser.pout)
 		banker.giveBits(300, data.name)
 		db.usersOnline += 1
 		io.emit('onlineStat', db.usersOnline)
@@ -95,10 +110,11 @@ io.on('connection', function(socket){
 		}else if (data.side == 2) {
 			db.tailsP += data.amount
 		}
+		var newbet = {time:util.getUnixTime(), name:data.user.name, amount:data.amount, side:data.side, pout:util.getUnixTime()+' '+data.user.name+' placed a bet worth '+data.amount+'bits on the side '+data.side}
+		log.betsPlaced.push(newbet)
+		console.log(newbet.pout);
 		io.emit('newBet', data.amount, db.headP, db.tailsP, data.user.name, data.side)
-		console.log('added new bet to pool');
-		console.log(data.side +' '+ data.user.name);
-		db.pool.push({side:data.side, amount:data.amount, name:data.user.name})
+		db.pool.push({time:util.getUnixTime(), side:data.side, amount:data.amount, name:data.user.name})
 	})
 	socket.on('disconnect', function () {
 		db.usersOnline -= 1
@@ -121,6 +137,8 @@ setInterval(function () {
 			spinning = true
 			setTimeout(function () {
 				counter = 60
+				var spinres = {time:util.getUnixTime(), side:spin}
+				log.spinRes.push(spinres)
 				repayer.repayMoney(spin)
 				banker.resetPool()
 				spinning = false
