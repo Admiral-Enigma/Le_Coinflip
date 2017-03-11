@@ -5,7 +5,7 @@ var fs = require('fs')
 
 var logFilePath = './logs/logs.json'
 var port = Number(process.env.PORT || 3000)
-var counter = 60
+var counter = 26
 var spinning = false
 var spin;
 var db = {
@@ -51,6 +51,15 @@ var banker = {
 		})
 		return tempUser
 	},
+	exitsUser: function (username) {
+		exits = false;
+		db.users.forEach(function (user) {
+			if(user.name == username){
+				exits = true
+			}
+		})
+		return exits
+	},
 	removeBits: function (amount, name) {
 		var user = banker.findUser(name)
 		user.bits -= amount
@@ -85,13 +94,23 @@ io.on('connection', function(socket){
 	io.emit('newData', db.headP, db.tailsP)
 
 	socket.on('newUser', function (data) {
-		db.users.push(data)
-		var newuser = {time:util.getUnixTime(), name:data.name, pout:util.getUnixTime()+' '+data.name+' has connected'}
-		log.events.push(newuser)
-		console.log(newuser.pout)
-		banker.giveBits(300, data.name, false)
-		db.usersOnline += 1
-		io.emit('onlineStat', db.usersOnline)
+		if(banker.exitsUser(data.name)){
+			var existingUser = banker.findUser(data.name)
+			var existingUserLogon = {time:util.getUnixTime(), name:data.name, pout:util.getUnixTime()+' '+data.name+' has loged in'}
+			log.events.push(existingUserLogon)
+			console.log(existingUserLogon.pout)
+			io.emit('existingUserData', existingUser)
+			db.usersOnline += 1
+			io.emit('onlineStat', db.usersOnline)
+		}else if (!banker.exitsUser(data.name)) {
+			db.users.push(data)
+			var newuser = {time:util.getUnixTime(), name:data.name, pout:util.getUnixTime()+' '+data.name+' has connected'}
+			log.events.push(newuser)
+			console.log(newuser.pout)
+			banker.giveBits(300, data.name, false)
+			db.usersOnline += 1
+			io.emit('onlineStat', db.usersOnline)
+		}
 	})
 	socket.on('placeBet', function (data) {
 		banker.removeBits(data.amount, data.user.name)
@@ -128,7 +147,7 @@ setInterval(function () {
 			io.emit('spin', spin)
 			spinning = true
 			setTimeout(function () {
-				counter = 60
+				counter = 26
 				var spinres = {time:util.getUnixTime(), side:spin}
 				log.spinRes.push(spinres)
 				banker.repayMoney(spin)

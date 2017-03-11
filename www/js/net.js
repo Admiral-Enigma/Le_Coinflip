@@ -14,6 +14,9 @@ var user = {
   removeBalance: function (amount) {
     this.bits -= amount
     $('#balance').html('You have: '+this.bits+' bits')
+  },
+  updateBalance: function () {
+    $('#balance').html('You have: '+this.bits+' bits')
   }
 }
 
@@ -70,6 +73,14 @@ window.onload = function () {
       first = false
     }
   })
+
+  socket.on('existingUserData', function (data) {
+    if(data.name === user.name){
+      user.bits = data.bits
+      user.updateBalance()
+    }
+  })
+
   socket.on('poolReset', function () {
     pHead = 0
     pTails = 0
