@@ -21,5 +21,8 @@ var ui = {
       user.setupUser(name)
       swal('Welcome '+name+'!', 'You can now start betting!')
     })
+  },
+  wonPopup: function (amount, username) {
+    swal('･｡ﾟ[̲̅$̲̅(̲̅ ͡° ͜ʖ ͡°̲̅)̲̅$̲̅]｡ﾟ.*', 'Congrats '+username+' you\'ve won '+amount+'bits!')
   }
 }

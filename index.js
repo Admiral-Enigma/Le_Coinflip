@@ -33,14 +33,14 @@ var util = {
 	}
 }
 var banker = {
-	giveBits: function (amount, name) {
+	giveBits: function (amount, name, bet) {
 		var user = banker.findUser(name)
 		user.bits += amount
 		db.bankBits -= amount
 		var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Gave '+amount+'bits to '+user.name}
 		log.transActions.push(transaction)
 		console.log(transaction.pout)
-		io.emit('bitsGiven', user, amount)
+		io.emit('bitsGiven', user, amount, bet)
 	},
 	findUser: function (username) {
 		var tempUser = null;
@@ -75,7 +75,7 @@ var banker = {
 				var repayEvent = {time:util.getUnixTime(), side:winside, amount:repay, user:bet.name, pout:util.getUnixTime()+' '+'Repayed '+repay+'bits to '+bet.name+' on '+winside+' side'}
 				log.transActions.push(repayEvent)
 				console.log(repayEvent.pou);
-				banker.giveBits(repay, bet.name)
+				banker.giveBits(repay, bet.name, true)
 			}
 		})
 	}
@@ -89,7 +89,7 @@ io.on('connection', function(socket){
 		var newuser = {time:util.getUnixTime(), name:data.name, pout:util.getUnixTime()+' '+data.name+' has connected'}
 		log.events.push(newuser)
 		console.log(newuser.pout)
-		banker.giveBits(300, data.name)
+		banker.giveBits(300, data.name, false)
 		db.usersOnline += 1
 		io.emit('onlineStat', db.usersOnline)
 	})
