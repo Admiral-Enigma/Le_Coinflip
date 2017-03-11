@@ -10,3 +10,7 @@ A coinflip csgo like betting game without real money or skins but bits!
  * Take logs of everthing for use in analysing and later and improving the coinflip algorithm - Done!
  
  
+[![forthebadge](http://forthebadge.com/images/badges/contains-cat-gifs.svg)](http://forthebadge.com)
+
+ 
+ 
