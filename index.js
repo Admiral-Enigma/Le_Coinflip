@@ -34,16 +34,13 @@ var util = {
 }
 var banker = {
 	giveBits: function (amount, name) {
-		db.users.forEach(function (user) {
-			if (user.name == name){
-				user.bits += amount
-				db.bankBits -= amount
-				var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Gave '+amount+'bits to '+user.name}
-				log.transActions.push(transaction)
-				console.log(transaction.pout)
-				io.emit('bitsGiven', user, amount)
-			}
-		})
+		var user = banker.findUser(name)
+		user.bits += amount
+		db.bankBits -= amount
+		var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Gave '+amount+'bits to '+user.name}
+		log.transActions.push(transaction)
+		console.log(transaction.pout)
+		io.emit('bitsGiven', user, amount)
 	},
 	findUser: function (username) {
 		var tempUser = null;
@@ -55,16 +52,13 @@ var banker = {
 		return tempUser
 	},
 	removeBits: function (amount, name) {
-		db.users.forEach(function (user) {
-			if (user.name == name){
-				user.bits -= amount
-				//db.bankBits -= amount
-				var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Removed '+amount+'bits from '+user.name}
-				log.transActions.push(transaction)
-				console.log(transaction.pout)
-				io.emit('bitsRemoved', user, amount)
-			}
-		})
+		var user = banker.findUser(name)
+		user.bits -= amount
+		db.bankBits += amount
+		var transaction = {time:util.getUnixTime(), reciver:user, amount:amount, pout:util.getUnixTime()+' '+'Removed '+amount+'bits from '+user.name}
+		log.transActions.push(transaction)
+		console.log(transaction.pout)
+		io.emit('bitsRemoved', user, amount)
 	},
 	resetPool: function () {
 		db.headP = 0
