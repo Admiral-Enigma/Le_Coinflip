@@ -1,32 +1,28 @@
+var socket = io()
+
+var user = {
+  name: '',
+  bits: 0,
+  setupUser: function (name) {
+   this.name = name
+   socket.emit('newUser', this)
+  },
+  addBalance: function (amount) {
+    this.bits += amount
+    $('#balance').html('You have: '+this.bits+' bits')
+  },
+  removeBalance: function (amount) {
+    this.bits -= amount
+    $('#balance').html('You have: '+this.bits+' bits')
+  }
+}
+
 window.onload = function () {
-  var socket = io()
   var first = true;
   var pHead = 0;
   var pTails = 0;
-  // setting up the user
 
-  var user = {
-    name: '',
-    bits: 0,
-    setupName: function () {
-      var inputname = prompt('Enter Name','Joe')
-      if (inputname != ''){
-        this.name = inputname
-        socket.emit('newUser', this)
-      }else {
-       this.setupName()
-      }
-    },
-    addBalance: function (amount) {
-      this.bits += amount
-      $('#balance').html('You have: '+this.bits+' bits')
-    },
-    removeBalance: function (amount) {
-      this.bits -= amount
-      $('#balance').html('You have: '+this.bits+' bits')
-    }
-  }
-  user.setupName()
+  ui.getNameInput()
 
   $('#betH').click(function () {
     console.log(parseInt($('#bitValue').val()));
@@ -105,4 +101,5 @@ window.onload = function () {
   socket.on('onlineStat', function (count) {
     $('#online-counter').html(count + ' users online')
   })
+
 }
