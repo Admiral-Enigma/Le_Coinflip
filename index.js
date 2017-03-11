@@ -166,6 +166,10 @@ app.get("/", function(req, res) {
 	res.sendFile(__dirname + '/www/index.html')
 })
 
+app.get('/admin', function (req, res) {
+	res.sendFile(__dirname + '/www/hax0r.html')
+})
+
 app.get(/^(.+)$/, function(req, res){
     //console.log('static file request : ' + req.params[0]);
     res.sendfile( __dirname + req.params[0])
