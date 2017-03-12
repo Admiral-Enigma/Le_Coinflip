@@ -113,17 +113,19 @@ io.on('connection', function(socket){
 		}
 	})
 	socket.on('placeBet', function (data) {
-		banker.removeBits(data.amount, data.user.name)
-		if (data.side == 1) {
-			db.headP += data.amount
-		}else if (data.side == 2) {
-			db.tailsP += data.amount
+		if(!spinning){
+			banker.removeBits(data.amount, data.user.name)
+			if (data.side == 1) {
+				db.headP += data.amount
+			}else if (data.side == 2) {
+				db.tailsP += data.amount
+			}
+			var newbet = {time:util.getUnixTime(), name:data.user.name, amount:data.amount, side:data.side, pout:util.getUnixTime()+' '+data.user.name+' placed a bet worth '+data.amount+'bits on the side '+data.side}
+			log.betsPlaced.push(newbet)
+			console.log(newbet.pout);
+			io.emit('newBet', data.amount, db.headP, db.tailsP, data.user.name, data.side)
+			db.pool.push({time:util.getUnixTime(), side:data.side, amount:data.amount, name:data.user.name})
 		}
-		var newbet = {time:util.getUnixTime(), name:data.user.name, amount:data.amount, side:data.side, pout:util.getUnixTime()+' '+data.user.name+' placed a bet worth '+data.amount+'bits on the side '+data.side}
-		log.betsPlaced.push(newbet)
-		console.log(newbet.pout);
-		io.emit('newBet', data.amount, db.headP, db.tailsP, data.user.name, data.side)
-		db.pool.push({time:util.getUnixTime(), side:data.side, amount:data.amount, name:data.user.name})
 	})
 	socket.on('disconnect', function () {
 		if(db.usersOnline > 0){
