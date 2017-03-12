@@ -3,7 +3,7 @@ var http = require("http").Server(app)
 var io = require('socket.io')(http)
 var fs = require('fs')
 
-var logFilePath = './logs/logs.json'
+var logFilePath = './logs/logs'
 var port = Number(process.env.PORT || 3000)
 var counter = 26
 var spinning = false
@@ -28,7 +28,7 @@ var util = {
 	},
 	saveLogs: function () {
 		var logJson = JSON.stringify(log);
-		fs.writeFileSync(logFilePath, logJson)
+		fs.writeFileSync(logFilePath+util.getUnixTime()+'.json', logJson)
 		console.log(util.getUnixTime() + ' Saved log file! (hopefuly)');
 	}
 }
@@ -172,7 +172,7 @@ app.get('/admin', function (req, res) {
 
 app.get(/^(.+)$/, function(req, res){
     //console.log('static file request : ' + req.params[0]);
-    res.sendfile( __dirname + req.params[0])
+    res.sendFile( __dirname + req.params[0])
 })
 
 http.listen(port, function(){
