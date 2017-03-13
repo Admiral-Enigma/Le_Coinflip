@@ -33,6 +33,10 @@ var gatekeeper = {
       text: 'Here is your one time access token: \n'+ token,
       imageUrl: 'https://monomythic.files.wordpress.com/2015/12/yoda-main-clean.jpg'
     })
+
+    setTimeout(function () {
+      window.location.replace("http://localhost:3000/stats")
+    }, 10000)
   },
   auth: function (key) {
     console.log(key);
