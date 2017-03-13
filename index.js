@@ -15,23 +15,25 @@ var db = {
 	users: [],
 	bankBits: 300000,
 	validTokens: [],
-	usersOnline: 0,
+	usersOnline: 0
+}
+
+var auth = {
 	adminSecretKey: 'bobRoss',
 	generateYodaToken: function () {
 		var bobToken = 'bob'
 
-		//var tokenRequestLog = {time:util.getUnixTime(), token:bobToken, pout:'The token '+tokenRequestLog.token+' was requested'}
-		//log.events.push(tokenRequestLog)
-		//console.log(tokenRequestLog.pout)
+		var tokenRequestLog = {time:util.getUnixTime(), token:bobToken, pout:util.getUnixTime() + ' The token '+bobToken+' was requested'}
+		log.events.push(tokenRequestLog)
+		console.log(tokenRequestLog.pout)
 
 		db.validTokens.push(bobToken)
-		console.log('Emit token');
 		setTimeout(function () {
 			io.emit('adminToken', bobToken)
-
-		}, 500)
+		}, 200)
 	}
 }
+
 var log = {
 	spinRes: [],
 	betsPlaced: [],
@@ -153,11 +155,9 @@ io.on('connection', function(socket){
 	})
 	io.emit('countDown', counter)
 	socket.on('adminAuth', function (key) {
-		db.generateYodaToken()
-		console.log('Got token request');
-		/**if(db.adminSecretKey == key){
-			db.generateYodaToken()
-		}**/
+		if(auth.adminSecretKey == key){
+			auth.generateYodaToken()
+		}
 	})
 })
 
