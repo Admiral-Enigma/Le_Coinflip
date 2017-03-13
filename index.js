@@ -14,7 +14,23 @@ var db = {
 	pool:[],
 	users: [],
 	bankBits: 300000,
-	usersOnline: 0
+	validTokens: [],
+	usersOnline: 0,
+	adminSecretKey: 'bobRoss',
+	generateYodaToken: function () {
+		var bobToken = 'bob'
+
+		//var tokenRequestLog = {time:util.getUnixTime(), token:bobToken, pout:'The token '+tokenRequestLog.token+' was requested'}
+		//log.events.push(tokenRequestLog)
+		//console.log(tokenRequestLog.pout)
+
+		db.validTokens.push(bobToken)
+		console.log('Emit token');
+		setTimeout(function () {
+			io.emit('adminToken', bobToken)
+
+		}, 500)
+	}
 }
 var log = {
 	spinRes: [],
@@ -136,6 +152,13 @@ io.on('connection', function(socket){
 		io.emit('onlineStat', db.usersOnline)
 	})
 	io.emit('countDown', counter)
+	socket.on('adminAuth', function (key) {
+		db.generateYodaToken()
+		console.log('Got token request');
+		/**if(db.adminSecretKey == key){
+			db.generateYodaToken()
+		}**/
+	})
 })
 
 setInterval(function () {
