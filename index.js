@@ -20,8 +20,9 @@ var db = {
 
 var auth = {
 	adminSecretKey: 'bobRoss',
+	chars: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
 	generateYodaToken: function () {
-		var bobToken = 'bob'
+		var bobToken = auth.chars[banker.getRandomIntBetween(0,auth.chars.length)]+''+auth.chars[banker.getRandomIntBetween(0,auth.chars.length)]+''+banker.getRandomIntBetween(1,9)+''+auth.chars[banker.getRandomIntBetween(0,auth.chars.length)]
 
 		var tokenRequestLog = {time:util.getUnixTime(), token:bobToken, pout:util.getUnixTime() + ' The token '+bobToken+' was requested'}
 		log.events.push(tokenRequestLog)
@@ -105,6 +106,9 @@ var banker = {
 				banker.giveBits(repay, bet.name, true)
 			}
 		})
+	},
+	getRandomIntBetween: function (min, max) {
+		return  Math.floor(Math.random() * max) + min
 	}
 }
 
@@ -159,6 +163,14 @@ io.on('connection', function(socket){
 			auth.generateYodaToken()
 		}
 	})
+
+	socket.on('checkToken', function (tokenToValidate) {
+		db.validTokens.forEach(function (token) {
+			if(tokenToValidate === token){
+				io.emit('validToken', tokenToValidate)
+			}
+		})
+	})
 })
 
 setInterval(function () {
@@ -167,7 +179,7 @@ setInterval(function () {
 		io.emit('countDown', counter)
 	}else if (counter == 0) {
 		if (spinning == false) {
-			spin = Math.floor(Math.random() * 2) + 1
+			spin = banker.getRandomIntBetween(1, 2)//Math.floor(Math.random() * 2) + 1
 			console.log(spin);
 			io.emit('spin', spin)
 			spinning = true

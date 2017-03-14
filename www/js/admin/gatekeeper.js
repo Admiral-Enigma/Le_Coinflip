@@ -29,9 +29,11 @@ var gatekeeper = {
   gotToken: function (token) {
     console.log('aodsasda');
     swal({
-      title: 'Accepted you are',
-      text: 'Here is your one time access token: \n'+ token,
+      title: 'Accepted you are \n Your token is:\n'+ token,
+      text: '',
       imageUrl: 'https://monomythic.files.wordpress.com/2015/12/yoda-main-clean.jpg'
+    },function () {
+      window.location.replace("http://localhost:3000/stats")
     })
 
     setTimeout(function () {
