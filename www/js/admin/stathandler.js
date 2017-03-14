@@ -34,6 +34,21 @@ var statHandler = {
     var tokenChecked = token
     socket.emit('checkToken', token)
     return tokenChecked
+  },
+  sortUserser: function (users) {
+    var swapped;
+    do {
+        swapped = false;
+        for (var i=0; i < users.length-1; i++) {
+            if (users[i] > users[i+1]) {
+                var temp = users[i];
+                users[i] = users[i+1];
+                users[i+1] = temp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+    return users
   }
 }
 
