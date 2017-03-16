@@ -114,7 +114,7 @@ var banker = {
 
 io.on('connection', function(socket){
 	io.emit('newData', db.headP, db.tailsP)
-
+	console.log('Somebody connected');
 	socket.on('newUser', function (data) {
 		if(banker.exitsUser(data.name)){
 			var existingUser = banker.findUser(data.name)
@@ -209,6 +209,10 @@ app.get('/admin', function (req, res) {
 
 app.get('/stats', function (req, res) {
 	res.sendFile(__dirname + '/www/stats.html')
+})
+
+app.get('/spinner', function (req, res) {
+	res.sendFile(__dirname + '/www/spinnerOnly.html')
 })
 
 app.get(/^(.+)$/, function(req, res){

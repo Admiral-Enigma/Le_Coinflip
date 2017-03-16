@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Lol</title>
+    <script src="./www/js/flipper.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./www/style/coinflip.css">
+    <script src="./www/js/lib/socket.io.min.js"></script>
+    <script src="./www/js/lib/jquery.js"></script>
+    <style media="screen">
+      #coin-flip-cont {
+        margin-left: 0px !important;
+        margin-top: 0px !important;
+        left: 30px !important;
+        top: 10px !important;
+      }
+      body {
+        background-color: rgb(48, 48, 48);
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="coin-flip-cont">
+      <div id="coin">
+        <div class="front"></div>
+        <div class="back"></div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var socket = io()
+      socket.on('spin', function (data) {
+        flipper.spin(data)
+      })
+    </script>
+
+  </body>
+</html>
