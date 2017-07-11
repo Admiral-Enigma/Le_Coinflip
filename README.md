@@ -6,7 +6,7 @@ A coinflip csgo like betting game without real money or skins but bits!
 # Install
  * First clone the repo
  * Run npm install
- * To start the server run npm start
+ * Then start the server by running npm start
 
 # Todo list
  * Make the countdown work - Done!
