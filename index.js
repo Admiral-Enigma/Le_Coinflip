@@ -47,9 +47,11 @@ var util = {
 		return Math.round(new Date() / 1000);
 	},
 	saveLogs: function () {
-		var logJson = JSON.stringify(log);
-		fs.writeFileSync(logFilePath+util.getUnixTime()+'.json', logJson)
-		console.log(util.getUnixTime() + ' Saved log file! (hopefuly)');
+		if (debug) {
+			var logJson = JSON.stringify(log);
+			fs.writeFileSync(logFilePath+util.getUnixTime()+'.json', logJson)
+			console.log(util.getUnixTime() + ' Saved log file! (hopefuly)');
+		}
 	}
 }
 var banker = {
@@ -195,7 +197,9 @@ setInterval(function () {
 	}else if (counter == 0) {
 		if (spinning == false) {
 			spin = banker.getRandomIntBetween(1, 2)//Math.floor(Math.random() * 2) + 1
-			console.log(spin);
+			if (debug) {
+				console.log(spin);
+			}
 			io.emit('spin', spin)
 			spinning = true
 			setTimeout(function () {
