@@ -6,7 +6,6 @@ A coinflip csgo like betting game without real money or skins but bits!
 # Install
  * First clone the repo
  * Run npm install
- * Before you start the server you need to make a folder called "logs"
  * To start the server run npm start
 
 # Todo list
