@@ -12,7 +12,7 @@ A coinflip csgo like betting game without real money or skins but bits!
  * Make the countdown work - Done!
  * Make it so users can bet on which side they thing will win - Done!
  * Make some kind of id system with users - Done!
- * Take logs of everthing for use in analysing and later and improving the coinflip algorithm - Done!
+ * Take logs of everthing for use in analysing and later improving the coinflip algorithm - Done!
  * Maybe add a chat? - Planned
  * Work more on the admin page - In progress
  
