@@ -8,7 +8,7 @@
     "start": "node index.js",
     "clean": "node clean.js"
   },
-  "author": "OxCart",
+  "author": "Lord Squirrel",
   "license": "MIT",
   "dependencies": {
     "express": "^4.14.1",
