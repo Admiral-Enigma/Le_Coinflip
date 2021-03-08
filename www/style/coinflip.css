@@ -30,7 +30,7 @@ height: 200px;
 #coin .front {
     transform: translateZ(1px);
     border-radius: 50%;
-    background-image: url('http://www.squirreldk.hol.es/assets/ct.png');
+    background-image: url('../static/ct.png');
     background-size: cover;
     display: block;
 }
@@ -38,7 +38,7 @@ height: 200px;
     #coin .back {
     transform: translateZ(-1px) rotateY(180deg);
     border-radius: 50%;
-    background-image: url('http://www.squirreldk.hol.es/assets/t.png');
+    background-image: url('../static/t.png');
      background-size: cover;
      display: block;
 }
