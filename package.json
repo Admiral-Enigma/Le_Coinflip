@@ -11,7 +11,7 @@
   "author": "Lord Squirrel",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.14.1",
+    "express": "^4.18.2",
     "socket.io": "^3.1.2"
   }
 }
